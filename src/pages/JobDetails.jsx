@@ -1,18 +1,38 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, VStack, Text, Box, Button } from "@chakra-ui/react";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../integrations/supabase/index.js';
 
-const jobs = [
-  { id: 1, title: "Frontend Developer", category: "Engineering", description: "Detailed description for Frontend Developer" },
-  { id: 2, title: "Product Manager", category: "Product", description: "Detailed description for Product Manager" },
-  { id: 3, title: "UI/UX Designer", category: "Design", description: "Detailed description for UI/UX Designer" },
-  { id: 4, title: "Backend Developer", category: "Engineering", description: "Detailed description for Backend Developer" },
-  { id: 5, title: "Graphic Designer", category: "Design", description: "Detailed description for Graphic Designer" },
-];
+const fetchJobById = async (id) => {
+  const { data, error } = await supabase
+    .from('Jobs')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};
 
 const JobDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const job = jobs.find(job => job.id === parseInt(id));
+  const { data: job, error, isLoading } = useQuery(['job', id], () => fetchJobById(id));
+
+  if (isLoading) {
+    return (
+      <Container centerContent maxW="container.md" py={10}>
+        <Text fontSize="2xl" fontWeight="bold">Loading...</Text>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container centerContent maxW="container.md" py={10}>
+        <Text fontSize="2xl" fontWeight="bold">Error loading job: {error.message}</Text>
+      </Container>
+    );
+  }
 
   if (!job) {
     return (
@@ -25,12 +45,12 @@ const JobDetails = () => {
   return (
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={4} mb={8}>
-        <Text fontSize="4xl" fontWeight="bold">{job.title}</Text>
-        <Text fontSize="lg" color="gray.500">{job.category}</Text>
+        <Text fontSize="4xl" fontWeight="bold">{job.job_title}</Text>
+        <Text fontSize="lg" color="gray.500">{job.job_function}</Text>
         <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
-          <Text>{job.description}</Text>
+          <Text>{job.job_description}</Text>
         </Box>
-      <Button onClick={() => navigate(-1)} colorScheme="blue">Back</Button>
+        <Button onClick={() => navigate(-1)} colorScheme="blue">Back</Button>
       </VStack>
     </Container>
   );
