@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { Container, VStack, Text, Box } from "@chakra-ui/react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, VStack, Text, Box, Button } from "@chakra-ui/react";
 
 const jobs = [
   { id: 1, title: "Frontend Developer", category: "Engineering", description: "Detailed description for Frontend Developer" },
@@ -11,6 +11,7 @@ const jobs = [
 
 const JobDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const job = jobs.find(job => job.id === parseInt(id));
 
   if (!job) {
@@ -29,6 +30,7 @@ const JobDetails = () => {
         <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
           <Text>{job.description}</Text>
         </Box>
+      <Button onClick={() => navigate(-1)} colorScheme="blue">Back</Button>
       </VStack>
     </Container>
   );
