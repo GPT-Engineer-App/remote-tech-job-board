@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, VStack, Input, Button, Text } from '@chakra-ui/react';
 import { useSupabaseAuth, SupabaseAuthUI } from '../integrations/supabase/auth';
+import { supabase } from '../integrations/supabase/index.js'; // Import supabase client
 
 const AdminLogin = () => {
   const { session, loading, logout } = useSupabaseAuth();
