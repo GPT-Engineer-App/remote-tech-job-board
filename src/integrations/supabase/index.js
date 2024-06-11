@@ -19,46 +19,48 @@ const fromSupabase = async (query) => {
 
 /* supabase integration types
 
-// EXAMPLE TYPES SECTION
-// DO NOT USE TYPESCRIPT
-
-Foo // table: foos
+Jobs // table: jobs
     id: number
-    title: string
+    created_at: string
+    job_title: string
+    job_description: string
+    job_function: string
 
-Bar // table: bars
-    id: number
-    foo_id: number // foreign key to Foo
-	
 */
 
-// Example hook for models
+// Hooks for Jobs table
 
-export const useFoo = ()=> useQuery({
-    queryKey: ['foo'],
-    queryFn: fromSupabase(supabase.from('foo')),
-})
-export const useAddFoo = () => {
+export const useJobs = () => useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => fromSupabase(supabase.from('Jobs').select('*')),
+});
+
+export const useAddJob = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newFoo)=> fromSupabase(supabase.from('foo').insert([{ title: newFoo.title }])),
-        onSuccess: ()=> {
-            queryClient.invalidateQueries('foo');
+        mutationFn: (newJob) => fromSupabase(supabase.from('Jobs').insert([newJob])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('jobs');
         },
     });
 };
 
-export const useBar = ()=> useQuery({
-    queryKey: ['bar'],
-    queryFn: fromSupabase(supabase.from('bar')),
-})
-export const useAddBar = () => {
+export const useUpdateJob = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newBar)=> fromSupabase(supabase.from('bar').insert([{ foo_id: newBar.foo_id }])),
-        onSuccess: ()=> {
-            queryClient.invalidateQueries('bar');
+        mutationFn: (updatedJob) => fromSupabase(supabase.from('Jobs').update(updatedJob).eq('id', updatedJob.id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('jobs');
         },
     });
 };
 
+export const useDeleteJob = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('Jobs').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('jobs');
+        },
+    });
+};
