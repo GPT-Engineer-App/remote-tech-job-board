@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Ensure Link is correctly imported
 import { Container, VStack, Text, Button, HStack, Box, SimpleGrid } from "@chakra-ui/react";
 import { useJobs } from "../integrations/supabase/index.js"; // Import the useJobs hook
 
@@ -14,6 +14,8 @@ const Index = () => {
   if (error) {
     return <Text>Error loading jobs: {error.message}</Text>;
   }
+
+  console.log("Jobs data:", jobs); // Log the jobs data to verify
 
   const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.job_function === filter);
 
@@ -30,7 +32,7 @@ const Index = () => {
         <Button onClick={() => setFilter("Engineering")} colorScheme={filter === "Engineering" ? "blue" : "gray"}>Engineering</Button>
       </HStack>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-        {filteredJobs.map(job => (
+        {filteredJobs.map(job => ( // Ensure jobs data is correctly mapped and displayed
           <Box key={job.id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
             <Link to={`/job/${job.id}`}>
               <Text fontSize="xl" fontWeight="bold">{job.job_title}</Text>
