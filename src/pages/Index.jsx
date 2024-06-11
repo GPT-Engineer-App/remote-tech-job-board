@@ -1,19 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import { Container, VStack, Text, Button, HStack, Box, SimpleGrid } from "@chakra-ui/react";
-
-const jobs = [
-  { id: 1, title: "Frontend Developer", category: "Engineering", description: "Detailed description for Frontend Developer" },
-  { id: 2, title: "Product Manager", category: "Product", description: "Detailed description for Product Manager" },
-  { id: 3, title: "UI/UX Designer", category: "Design", description: "Detailed description for UI/UX Designer" },
-  { id: 4, title: "Backend Developer", category: "Engineering", description: "Detailed description for Backend Developer" },
-  { id: 5, title: "Graphic Designer", category: "Design", description: "Detailed description for Graphic Designer" },
-];
+import { useJobs } from "../integrations/supabase/index.js"; // Import the useJobs hook
 
 const Index = () => {
   const [filter, setFilter] = useState("All");
+  const { data: jobs, error, isLoading } = useJobs(); // Use the useJobs hook to fetch jobs data
 
-  const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.category === filter);
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text>Error loading jobs: {error.message}</Text>;
+  }
+
+  const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.job_function === filter);
 
   return (
     <Container centerContent maxW="container.md" py={10}>
@@ -31,8 +33,8 @@ const Index = () => {
         {filteredJobs.map(job => (
           <Box key={job.id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
             <Link to={`/job/${job.id}`}>
-              <Text fontSize="xl" fontWeight="bold">{job.title}</Text>
-              <Text mt={2}>{job.category}</Text>
+              <Text fontSize="xl" fontWeight="bold">{job.job_title}</Text>
+              <Text mt={2}>{job.job_function}</Text>
             </Link>
           </Box>
         ))}
