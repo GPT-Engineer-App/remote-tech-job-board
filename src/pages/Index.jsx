@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; // Ensure Link is correctly imported
 import { Container, VStack, Text, Button, HStack, Box, SimpleGrid } from "@chakra-ui/react";
-import { useJobs } from "../integrations/supabase/index.js"; // Import the useJobs hook
+import { useJobs, useDeleteJob } from "../integrations/supabase/index.js"; // Import the useJobs and useDeleteJob hooks
+import { useSupabaseAuth } from "../integrations/supabase/auth"; // Import useSupabaseAuth hook
 
 const Index = () => {
   const [filter, setFilter] = useState("All");
   const { data: jobs, error, isLoading } = useJobs(); // Use the useJobs hook to fetch jobs data
+  const { session } = useSupabaseAuth(); // Get session from useSupabaseAuth hook
+  const deleteJobMutation = useDeleteJob(); // Get deleteJob mutation
+
+  const handleDelete = (id) => {
+    deleteJobMutation.mutate(id);
+  };
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -32,12 +39,15 @@ const Index = () => {
         <Button onClick={() => setFilter("Engineering")} colorScheme={filter === "Engineering" ? "blue" : "gray"}>Engineering</Button>
       </HStack>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-        {filteredJobs.map(job => ( // Ensure jobs data is correctly mapped and displayed
+        {filteredJobs.map(job => (
           <Box key={job.id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
             <Link to={`/job/${job.id}`}>
               <Text fontSize="xl" fontWeight="bold">{job.job_title}</Text>
               <Text mt={2}>{job.job_function}</Text>
             </Link>
+            {session && (
+              <Button mt={2} colorScheme="red" onClick={() => handleDelete(job.id)}>Delete</Button>
+            )}
           </Box>
         ))}
       </SimpleGrid>
