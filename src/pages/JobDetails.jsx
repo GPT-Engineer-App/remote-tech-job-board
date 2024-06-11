@@ -46,11 +46,11 @@ const JobDetails = () => {
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={4} mb={8}>
         <Text fontSize="4xl" fontWeight="bold">{job.job_title}</Text>
-        <Text fontSize="lg" color="gray.500">{job.job_function}</Text>
+        
         <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
           <Text>{job.job_description}</Text>
         </Box>
-        <Button onClick={() => navigate(-1)} colorScheme="blue">Back</Button>
+        <Button onClick={() => navigate('/')} colorScheme="blue">Back to Home</Button>
       </VStack>
     </Container>
   );
