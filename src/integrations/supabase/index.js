@@ -26,6 +26,12 @@ Jobs // table: jobs
     job_description: string
     job_function: string
 
+Profiles // table: profiles
+    id: number
+    created_at: string
+    username: string
+    avatar_url: string
+
 */
 
 // Hooks for Jobs table
@@ -61,6 +67,43 @@ export const useDeleteJob = () => {
         mutationFn: (id) => fromSupabase(supabase.from('Jobs').delete().eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('jobs');
+        },
+    });
+};
+
+// Hooks for Profiles table
+
+export const useProfiles = () => useQuery({
+    queryKey: ['profiles'],
+    queryFn: () => fromSupabase(supabase.from('Profiles').select('*')),
+});
+
+export const useAddProfile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newProfile) => fromSupabase(supabase.from('Profiles').insert([newProfile])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('profiles');
+        },
+    });
+};
+
+export const useUpdateProfile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (updatedProfile) => fromSupabase(supabase.from('Profiles').update(updatedProfile).eq('id', updatedProfile.id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('profiles');
+        },
+    });
+};
+
+export const useDeleteProfile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('Profiles').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('profiles');
         },
     });
 };
