@@ -42,8 +42,6 @@ const JobDetails = () => {
     );
   }
 
-  console.log("Job data:", job); // Log the job data to verify
-
   return (
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={4} mb={8}>
